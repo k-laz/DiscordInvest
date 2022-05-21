@@ -1,1 +1,2 @@
 # Alpha Vantage API Key: DJPTILM7Q4O2RGE8
+# Bot Token: OTc3NjU1MjE4NDMzMDU2ODgw.GpBvgD.ZrBGkncl5jw5NPzJe-z4c_Zt39qq01RUPNPhtY
