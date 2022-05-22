@@ -1,9 +1,5 @@
-![image](https://user-images.githubusercontent.com/56948805/169717054-e55d7292-a81d-409a-a5a8-0558beac739e.png)
-<style type="text/css">
-    img {
-        width: 250px;
-    }
-</style>
+![image](https://user-images.githubusercontent.com/56948805/169717054-e55d7292-a81d-409a-a5a8-0558beac739e.png=250x)
+
 # DiscordInvest
 GryphHacks 2022 submission
 
