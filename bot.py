@@ -25,13 +25,14 @@ class User:
         self.stocks = {}
 
     # returns the price of purchased stock on success and 0 on failure
-    def purchaseStock(self, stockName, amount, quote) -> float:
+    def purchaseStock(self, ticker, shares, quote) -> float:
         if self.cash >= quote:
-            if stockName in self.stocks:
-                self.stocks[stockName] += amount
+            if ticker in self.stocks:
+                self.stocks[ticker] += shares
             else:
-                self.stocks[stockName] = amount
+                self.stocks[ticker] = shares
             self.cash -= quote
+            db.add_stock(self.id, ticker, shares)
             return quote
         else:
             return 0
@@ -41,6 +42,7 @@ class User:
         if self.stocks[ticker] >= shares:
             self.stocks[ticker] -= shares
             self.cash += quote
+            db.sell_stock(self.id, ticker, shares)
             return quote
         else:
             return 0
@@ -163,7 +165,6 @@ async def init_buy(ctx, user):
                 if buy == 0:
                     await ctx.send(f'Unable to puchase {shares} shares of {ticker} stock, max purchase is {max_purchase}, try again')
                 else:
-                    db.add_stock(user.id, ticker, shares)
                     await ctx.send(f'You successfully purchased {shares} shares of {ticker} stock')
                     await ctx.send("Option to buy more: Specify Ticker (ex: TSLA)")
                 
@@ -208,7 +209,6 @@ async def init_sell(ctx, user):
                 if sell == 0:
                     await ctx.send(f'Unable to sell {shares} shares of {ticker} stock, you have {user.stocks[ticker]} shares, try again')
                 else:
-                    db.sell_stock(user.id, ticker, shares)
                     await ctx.send(f'You successfully sold {shares} shares of {ticker} stock for {quote}')
                     await ctx.send("Option to sell more: specify ticker (ex: TSLA)")
                 
