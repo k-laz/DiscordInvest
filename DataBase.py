@@ -48,6 +48,8 @@ class dataBase:
 
     # this method adds a new stock to the table
     def add_stock(self, userID, stock, amount,) -> None:
+        userID = str(userID)
+        
         with self.conn.cursor() as cur:
             # todo - maybe use gen_random_uuid()
             # sql = "CREATE TABLE IF NOT EXISTS shares (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), userID UUID REFERENCES accounts, name STRING, amount FLOAT)"
