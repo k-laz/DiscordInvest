@@ -1,7 +1,9 @@
 #from curses import noecho
 import os, psycopg2, time, logging
+import uuid
 from sqlite3 import connect
 from dotenv import load_dotenv
+from requests import delete
 
 load_dotenv()
 
@@ -13,10 +15,10 @@ class dataBase:
     def create_account(self, username, balance):
         with self.conn.cursor() as cur:
             cur.execute(
-                "CREATE TABLE IF NOT EXISTS accounts (id STRING PRIMARY KEY, balance INT)"
+                "CREATE TABLE IF NOT EXISTS accounts (id UUID PRIMARY KEY, balance INT, portfolio_value INT)"
             )
             cur.execute(
-                "UPSERT INTO accounts (id, balance) VALUES (%s, %s)", (username, balance))
+                "UPSERT INTO accounts (id, balance, portfolio_value) VALUES (%s, %s, 0)", (username, balance))
             logging.debug("create_accounts(): status message: %s", cur.statusmessage)
         self.conn.commit()
 
@@ -44,21 +46,25 @@ class dataBase:
 
 
     # this method adds a new stock to the table
-    def add_stock(self, username, stock, amount,) -> None:
+    def add_stock(self, uuid, stock, amount,) -> None:
         with self.conn.cursor() as cur:
             
             # add the column if it does not exists
-            sql = "ALTER TABLE accounts ADD COLUMN IF NOT EXISTS %s INT" % stock
-            print(sql)
+            # sql = "ALTER TABLE accounts ADD COLUMN IF NOT EXISTS %s INT" % stock
+
+            # todo - maybe use gen_random_uuid()
+            sql = "CREATE TABLE IF NOT EXISTS shares (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), userID UUID REFERENCES accounts, name STRING, amount FLOAT)"
+            # print(sql)
             cur.execute(
                 sql 
             )
-            # print("collumn crreated")
-            # sql = "UPDATE accounts SET %s = %s + %s WHERE id = %s" % (stock, stock, amount, username)
-            # print(sql)
-            # cur.execute(
-            #     sql
-            # )
+
+            # todo - error here
+            sql = "UPSERT INTO shares (id, userID, name, amount) VALUES(gen_random_uuid(), %s, %s, %s)" % (uuid, stock, amount)
+            print(sql)
+            cur.execute(
+                sql
+            )
 
         self.conn.commit()
         logging.debug("add_stock(): status message: %s", cur.statusmessage)
@@ -84,20 +90,20 @@ class dataBase:
         with self.conn.cursor() as cur:
             cur.execute("""SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'""")
 
-
             for table in cur.fetchall():
                 print(table)
 
-    def col_names(self):
+    def col_names(self, table):
         with self.conn.cursor() as curs:
-            curs.execute("Select * FROM accounts LIMIT 0")   
+            curs.execute("Select * FROM %s LIMIT 0" % table)   
             colnames = [desc[0] for desc in curs.description]
 
         print(colnames)
     
     def print_stock(self, stock) -> None:
         with self.conn.cursor() as cur:
-            cur.execute("SELECT id, %s FROM accounts" % stock)
+            # cur.execute("SELECT id, %s FROM shares" % stock)
+            cur.execute("SELECT id, name FROM shares")
             # logging.debug("print_balances(): status message: %s", cur.statusmessage)
             rows = cur.fetchall()
             self.conn.commit()
@@ -121,22 +127,31 @@ class dataBase:
         self.conn.commit()
 
 
+    def delete_table(self) -> None:
+        with self.conn.cursor() as cur:
+            sql = "DROP TABLE accounts"
+            cur.execute(sql)
+
+        self.conn.commit()
+
 
 def main():
     portfolio = dataBase()
+    # portfolio.delete_table()
 
+    uuid = "acde070d-8c4c-4f0d-9d8a-162843c10333"
 
-    portfolio.create_account("zdon", 100000)
+    portfolio.create_account(uuid, 100000)
+    portfolio.print_balances()
+    portfolio.transaction(uuid, -55000)
     portfolio.print_balances()
 
-    portfolio.transaction("zdon", -55000)
-    portfolio.print_balances()
-    portfolio.transaction("zdon", 5000)
-    portfolio.print_balances()
-    portfolio.add_stock("zdon","appl", 5)
-    portfolio.print_stock("appl")
+    portfolio.add_stock(uuid, "APPL", 5)
 
-    portfolio.col_names()
+    portfolio.col_names("accounts")
+    portfolio.col_names("shares")
+
+    portfolio.print_stock("APPL")
     
     # portfolio.delete_accounts()
     # portfolio.col_names()
