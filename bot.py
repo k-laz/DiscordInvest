@@ -9,7 +9,7 @@ import logging
 import asyncio
 
 from stock import Stock
-from DataBase import dataBase
+#from DataBase import dataBase
 
 
 load_dotenv()
@@ -32,7 +32,7 @@ class User:
             else:
                 self.stocks[ticker] = shares
             self.cash -= quote
-            db.add_stock(self.id, ticker, shares)
+            #db.add_stock(self.id, ticker, shares)
             return quote
         else:
             return 0
@@ -42,20 +42,20 @@ class User:
         if self.stocks[ticker] >= shares:
             self.stocks[ticker] -= shares
             self.cash += quote
-            db.sell_stock(self.id, ticker, shares)
+            #db.sell_stock(self.id, ticker, shares)
             return quote
         else:
             return 0
 
 
 bot = commands.Bot(command_prefix='$')
-db = dataBase()
+#db = dataBase()
 stockExchange = Stock()
 users = {}
 
 # def loadUser(userid) -> User:
 #     if userid not in users:
-#         if db.has_account(userid):
+#         if db.hasUser(userid):
 #             user = User(userid)
 #             user.cash = db.get_balance(userid)
 #             stocks = db.get_account_stocks(userid) # stocks is an array of share tuples (ticker, amount) associated with a user 

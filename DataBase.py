@@ -81,11 +81,11 @@ class dataBase:
 
 
     # returns the balance of the input user
-    def getBalance(self, uuid):
+    def getBalance(self, userID):
         balance = 0
         with self.conn.cursor() as cur:
             cur.execute(
-               'SELECT balance FROM accounts WHERE id = %s', (uuid,)
+               'SELECT balance FROM accounts WHERE id = %s', (userID,)
             )
             balance = cur.fetchone()
         
@@ -98,7 +98,7 @@ class dataBase:
     def hasUser(self, discordID):
         with self.conn.cursor() as cur:
             cur.execute(
-                'SELECT 1 FROM accounts WHERE id = %s', (discordID,)
+                'SELECT 1 FROM accounts WHERE id = %s', (discordID)
             )
             if cur.fetchone() is None:
                 return False
