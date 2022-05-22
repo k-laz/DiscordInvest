@@ -16,8 +16,9 @@ a{
 
 .title{
     color: #ffffff;
-    background-color: 23272a;
+    background-color: #23272a;
     display: flex;
+    padding: 0 600px;
     align-items: center;
     justify-content: center;
     margin-bottom: 50px;
