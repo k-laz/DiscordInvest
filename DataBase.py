@@ -137,6 +137,19 @@ class dataBase:
         pass
 
 
+    def getProfolio(self, userID):
+        with self.conn.cursor() as cur:
+            cur.execute(
+                'SELECT name, amount from shares WHERE userID = %s', (userID,)
+            )
+            # print(cur.fetchall())
+
+            ans = cur.fetchall()
+
+        self.conn.commit()
+
+        return ans
+
 
 
 
@@ -240,12 +253,16 @@ def main():
 
     # portfolio.getShareID(uuid)
 
-    portfolio.remove_stock(uuid, 'appl', 20)
-    portfolio.stockAmount()
-    # portfolio.add_stock(uuid, 'appl', 5)
+    # portfolio.add_stock(uuid, 'appl', 100)
     # portfolio.stockAmount()
 
 
+    # portfolio.add_stock(uuid, 'tsla', 15)
+    # portfolio.stockAmount()
+    
+    port = portfolio.getProfolio(uuid)
+
+    print(port)
 
     # portfolio.col_names("accounts")
     # portfolio.col_names("shares")
