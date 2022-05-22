@@ -47,7 +47,7 @@ class dataBase:
 
 
     # this method adds a new stock to the table
-    def add_stock(self, uuid, stock, amount,) -> None:
+    def add_stock(self, userID, stock, amount,) -> None:
         with self.conn.cursor() as cur:
             # todo - maybe use gen_random_uuid()
             # sql = "CREATE TABLE IF NOT EXISTS shares (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), userID UUID REFERENCES accounts, name STRING, amount FLOAT)"
@@ -58,18 +58,21 @@ class dataBase:
             self.conn.commit()
             
             cur.execute(
-                'SELECT 1 FROM shares WHERE userid = %s AND name = %s', (uuid, stock)
+                'SELECT 1 FROM shares WHERE userid = %s AND name = %s', (str(userID), stock)
             )
+
+            print("userID", userID)
+            print("type is ", type(userID))
 
             # print('fetch-', cur.fetchone())
             if(cur.fetchone() is not None):
                 # print("in here")
                 cur.execute(
-                    'UPDATE shares SET amount = amount + %s WHERE userID = %s AND name = %s', (amount, uuid, stock)
+                    'UPDATE shares SET amount = amount + %s WHERE userID = %s AND name = %s', (amount, userID, stock)
                 )
             else:
                 cur.execute(
-                    'UPSERT INTO shares (userID, name, amount) VALUES (%s, %s, %s)' , (uuid, stock, amount)
+                    'UPSERT INTO shares (userID, name, amount) VALUES (%s, %s, %s)' , (userID, stock, amount)
                 )
             logging.debug("add_stock(): status message: %s", cur.statusmessage) 
         self.conn.commit()
