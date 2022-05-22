@@ -8,7 +8,7 @@ import logging
 import asyncio
 
 from stock import Stock
-from db import DB
+from DataBase import dataBase
 
 
 load_dotenv()
@@ -25,7 +25,7 @@ class User:
 
     # returns the price of purchased stock on success and 0 on failure
     def purchaseStock(self, stockName, amount, quote) -> float:
-        if self.cash > quote:
+        if self.cash >= quote:
             if stockName in self.stocks:
                 self.stocks[stockName] += amount
             else:
@@ -35,22 +35,27 @@ class User:
         else:
             return 0
             
-    # def portfolio(self):
-    #     return [self.cash, self.stocks]
-        
+    # returns the amount of cash of sold stock on success and 0 on failure
+    def sellStock(self, ticker, shares, quote) -> float:
+        if self.stocks[ticker] >= shares:
+            self.stocks[ticker] -= shares
+            self.cash += quote
+            return quote
+        else:
+            return 0
 
 
 bot = commands.Bot(command_prefix='$')
-database = DB()
+#db = dataBase()
 stockExchange = Stock()
 users = {}
 
 def loadUser(userid) -> User:
     if userid not in users:
-        database.get_user(userid)
+        #user = db.get_user(userid)
         # if not database.get_user(userid):
         users[userid] = User(userid)
-        database.insert_user(userid)
+        #db.insert_user(userid)
     
     return users[userid]
 
@@ -77,26 +82,27 @@ async def invest(ctx):
                 await show_portfolio(ctx, user)
             elif msg.content == "buy":
                 await init_buy(ctx, user)
+            elif msg.content == "sell":
+                await init_sell(ctx, user)
             elif msg.content == "exit":
-                await ctx.send("leaving platform...")
+                await ctx.send("Leaving Discord Invest...")
                 break
             else:
                 await ctx.send("Huh?")
-
         except asyncio.TimeoutError:
             await ctx.send("You took to long...")
             break
-    
     #TODO: save the user to cockroachDB
 
 
 async def show_portfolio(ctx, user):
     await ctx.send('Your portfolio:')
-    await ctx.send(f'Cash: {user.cash}')
+    await ctx.send(f'CASH: {user.cash}')
     for stock in user.stocks:
-        await ctx.send(f'{stock} - {user.stocks[stock]}')
+        await ctx.send(f'{stock} -> {user.stocks[stock]}')
 
 
+#TODO: split the buying functionality into seperate function later
 async def init_buy(ctx, user):
     await ctx.send("Specify Ticker (ex: TSLA)")
 
@@ -107,36 +113,85 @@ async def init_buy(ctx, user):
         try:
             # This command waits for either a Ticker or number
             msg = await bot.wait_for('message', check=lambda m: m.author == ctx.author and m.channel == ctx.channel, timeout=30.0)
-    
+
+            if msg.content == "exit":
+                break
             # msg is the amount of stock to purchase, else its a Ticker
-            if is_number(msg.content) and ticker is not None:
-                amount = float(msg.content)
+            elif is_number(msg.content) and ticker is not None:
+                shares = float(msg.content)
                 # quote is the cash needed to purchase specified amount of stock
-                quote = stockExchange.get_price(amount)
-                buy = user.purchaseStock(ticker, amount, quote)
+                quote = stockExchange.get_price(ticker, shares)
+                buy = user.purchaseStock(ticker, shares, quote)
                 if buy == 0:
-                    await ctx.send(f'Unable to puchase {amount} amount of {ticker} stock, max purchase is {max_purchase}, try again')
+                    await ctx.send(f'Unable to puchase {shares} shares of {ticker} stock, max purchase is {max_purchase}, try again')
                 else:
-                    await ctx.send(f'You successfully purchased {amount} worth of {ticker} stock')
-                    break
-                    
+                    await ctx.send(f'You successfully purchased {shares} shares of {ticker} stock')
+                    await ctx.send("Option to buy more: Specify Ticker (ex: TSLA)")
+                
             #TODO: if user inputs an incorrect Ticker, the validTicker function still returns True for some reason, solve this later
-            elif not is_number(msg.content) and stockExchange.validTicker(msg.content):
+            elif stockExchange.validTicker(msg.content):
                 ticker = msg.content
                 quote = stockExchange.setQuote(ticker)
                 max_purchase = stockExchange.maxPurchase(ticker, user.cash)
-                await ctx.send(f'Your max buying power of {ticker} is {max_purchase}, how much would you like to buy? (input number)')
-                continue
-            elif msg.content == "exit":
-                await ctx.send("Leaving the purchasing area...")
-                break
+                await ctx.send(f'Your max buying power of {ticker} is {max_purchase} shares, how much would you like to buy? (input number)')
+                
             else:
                 await ctx.send("Invalid input, try again...")
-                continue
 
         except asyncio.TimeoutError:
             await ctx.send("You took to long...")
             break
+    await ctx.send("Leaving exhcange platform...")
+
+
+
+async def init_sell(ctx, user):
+    await ctx.send("You have the following shares...")
+    for share in user.stocks:
+        await ctx.send(f'{share} -> {user.stocks[share]}')
+    await ctx.send("Specify Ticker (ex: TSLA)")
+
+    # flag indicating the user is inputting amount of stock to purchase
+    ticker = None
+    max_purchase = 0
+    while True:
+        try:
+            # This command waits for either a Ticker or number
+            msg = await bot.wait_for('message', check=lambda m: m.author == ctx.author and m.channel == ctx.channel, timeout=30.0)
+
+            if msg.content == "exit":
+                break
+
+            # msg is the amount of stock to sell, else its a Ticker
+            elif is_number(msg.content) and ticker is not None:
+                shares = float(msg.content)
+                # quote is the cash returned for specified amount of stock
+                quote = stockExchange.get_price(ticker, shares)
+                sell = user.sellStock(ticker, shares, quote)
+                if sell == 0:
+                    await ctx.send(f'Unable to sell {shares} shares of {ticker} stock, you have {user.stocks[ticker]} shares, try again')
+                else:
+                    await ctx.send(f'You successfully sold {shares} shares of {ticker} stock for {quote}')
+                    await ctx.send("Option to sell more: specify ticker (ex: TSLA)")
+                
+            #TODO: if user inputs an incorrect Ticker, the validTicker function still returns True for some reason, solve this later
+            elif stockExchange.validTicker(msg.content):
+                ticker = msg.content
+                if ticker in user.stocks:
+                    max_sell = stockExchange.maxSell(ticker, user.stocks[ticker])
+                    await ctx.send(f'Your max selling power of {user.stocks[ticker]} worth of {ticker} is {max_sell}, how much shares would you like to sell? (Input number)')
+
+            else:
+                await ctx.send("Invalid input, try again...")
+
+        except asyncio.TimeoutError:
+            await ctx.send("You took to long...")
+            break
+    await ctx.send("Leaving exhange platform...")
+    
+
+# async def purchase(ctx, user, ticker, shares: float):
+#     pass
 
 def is_number(value):
     try:
