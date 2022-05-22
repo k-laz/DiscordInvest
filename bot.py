@@ -13,6 +13,7 @@ from stock import Stock
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
+
 #logging.basicConfig(level=logging.INFO)
 
 class User:
@@ -79,6 +80,8 @@ async def invest(ctx):
         except asyncio.TimeoutError:
             await ctx.send("You took to long...")
             break
+    
+    #TODO: save the user to cockroachDB
 
 
 async def show_portfolio(ctx, user):
