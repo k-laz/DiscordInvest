@@ -2,8 +2,6 @@
 import os, psycopg2, time, logging
 from tkinter.tix import Select
 from pickle import FALSE
-from types import NoneType
-import uuid
 from sqlite3 import Row, connect
 from dotenv import load_dotenv
 from requests import delete

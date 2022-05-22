@@ -1,5 +1,6 @@
 from multiprocessing.sharedctypes import Value
 import os
+from turtle import color
 
 import discord
 from dotenv import load_dotenv
@@ -50,18 +51,24 @@ db = dataBase()
 stockExchange = Stock()
 users = {}
 
+# def loadUser(userid) -> User:
+#     if userid not in users:
+#         if db.has_account(userid):
+#             user = User(userid)
+#             user.cash = db.get_balance(userid)
+#             stocks = db.get_account_stocks(userid) # stocks is an array of share tuples (ticker, amount) associated with a user 
+#             for share in stocks:
+#                 user.stocks[share.ticker] = share.amount
+#             users[userid] = user
+#         else:
+#             users[userid] = User(userid)
+#             db.create_account(userid, 100000) # 100,000 initial mock cash injection
+    
+#     return users[userid]
+
 def loadUser(userid) -> User:
     if userid not in users:
-        if db.has_account(userid):
-            user = User(userid)
-            user.cash = db.get_balance(userid)
-            stocks = db.get_account_stocks(userid) # stocks is an array of share tuples (ticker, amount) associated with a user 
-            for share in stocks:
-                user.stocks[share.ticker] = share.amount
-            users[userid] = user
-        else:
-            users[userid] = User(userid)
-            db.create_account(userid, 100000) # 100,000 initial mock cash injection
+        users[userid] = User(userid)
     
     return users[userid]
 
@@ -105,11 +112,31 @@ async def invest(ctx):
 async def help(ctx):
     await ctx.send('Available commands: portfolio, buy, sell, help, exit')
 
+
 async def show_portfolio(ctx, user):
-    await ctx.send('Your portfolio:')
-    await ctx.send(f'CASH: {user.cash}')
+    embed = discord.Embed(
+        title = f'{ctx.author} Portfolio',
+        description = "",
+        color = discord.Color.dark_blue()
+    )
+
+    #embed.set_footer(text='this is a footer')
+    #embed.set_image(url='https://playerassist.com/wp-content/uploads/2019/06/add-discord-bots-img.png')
+    embed.set_thumbnail(url='https://playerassist.com/wp-content/uploads/2019/06/add-discord-bots-img.png')
+    #embed.set_author(name="Author Name", icon_url='https://playerassist.com/wp-content/uploads/2019/06/add-discord-bots-img.png')
+    #embed.add_field(name=".help", value='.help', inline=False)
+    #embed.add_field(name=".buy", value='.buy', inline=True)
+    embed.add_field(name="CASH", value=f'{user.cash} $', inline=False)
     for stock in user.stocks:
-        await ctx.send(f'{stock} -> {user.stocks[stock]}')
+        embed.add_field(name=f'{stock}', value=f'{user.stocks[stock]}', inline=False)
+    
+    await ctx.send(embed=embed)
+
+# async def show_portfolio(ctx, user):
+#     await ctx.send('Your portfolio:')
+#     await ctx.send(f'CASH: {user.cash}')
+#     for stock in user.stocks:
+#         await ctx.send(f'{stock} -> {user.stocks[stock]}')
 
 
 #TODO: split the buying functionality into seperate function later
@@ -142,7 +169,6 @@ async def init_buy(ctx, user):
                 
             elif stockExchange.validTicker(msg.content):
                 ticker = msg.content
-                quote = stockExchange.setQuote(ticker)
                 max_purchase = stockExchange.maxPurchase(ticker, user.cash)
                 await ctx.send(f'Your max buying power of {ticker} is {max_purchase} shares, how much would you like to buy? (input number)')
                 
