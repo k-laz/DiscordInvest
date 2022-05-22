@@ -48,26 +48,27 @@ class dataBase:
     # this method adds a new stock to the table
     def add_stock(self, uuid, stock, amount,) -> None:
         with self.conn.cursor() as cur:
-            
-            # add the column if it does not exists
-            # sql = "ALTER TABLE accounts ADD COLUMN IF NOT EXISTS %s INT" % stock
-
             # todo - maybe use gen_random_uuid()
-            sql = "CREATE TABLE IF NOT EXISTS shares (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), userID UUID REFERENCES accounts, name STRING, amount FLOAT)"
+            # sql = "CREATE TABLE IF NOT EXISTS shares (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), userID UUID REFERENCES accounts, name STRING, amount FLOAT)"
             # print(sql)
             cur.execute(
-                sql 
+                "CREATE TABLE IF NOT EXISTS shares (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), userID UUID REFERENCES accounts, name STRING, amount FLOAT)"
             )
-
-            # todo - error here
-            sql = "UPSERT INTO shares (id, userID, name, amount) VALUES(gen_random_uuid(), %s, %s, %s)" % (uuid, stock, amount)
-            print(sql)
+            self.conn.commit()
+            
             cur.execute(
-                sql
+                'SELECT 1 FROM shares WHERE userid = %s AND name = %s', (uuid, stock)
             )
 
+            print('fetch-', cur.fetchone())
+            if(cur.fetchone != "None"):
+                print("in here")
+            # cur.execute(
+            #     'UPSERT INTO shares (userID, name, amount) VALUES (%s, %s, %s)' , (uuid, stock, amount)
+            # )
+            logging.debug("add_stock(): status message: %s", cur.statusmessage) 
         self.conn.commit()
-        logging.debug("add_stock(): status message: %s", cur.statusmessage)
+
     
 
 
@@ -129,7 +130,11 @@ class dataBase:
 
     def delete_table(self) -> None:
         with self.conn.cursor() as cur:
+            sql = "DROP TABLE shares"
+            cur.execute(sql)
             sql = "DROP TABLE accounts"
+            cur.execute(sql)
+            sql = "DROP TABLE messages"
             cur.execute(sql)
 
         self.conn.commit()
@@ -139,6 +144,8 @@ def main():
     portfolio = dataBase()
     # portfolio.delete_table()
 
+    # exit()
+
     uuid = "acde070d-8c4c-4f0d-9d8a-162843c10333"
 
     portfolio.create_account(uuid, 100000)
@@ -146,7 +153,7 @@ def main():
     portfolio.transaction(uuid, -55000)
     portfolio.print_balances()
 
-    portfolio.add_stock(uuid, "APPL", 5)
+    portfolio.add_stock(uuid, 'appl', 5)
 
     portfolio.col_names("accounts")
     portfolio.col_names("shares")
