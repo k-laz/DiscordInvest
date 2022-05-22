@@ -10,7 +10,7 @@ load_dotenv()
 class stock:
 
     def __init__(self):
-        self.API_KEY = "sandbox_ca4pl4aad3ibhjmjp4hg"
+        self.API_KEY = os.getenv('PROJECT_API_KEY')
         self.finnhub_client = finnhub.Client(api_key=self.API_KEY)
 
     def buy(self, amount, stock):
