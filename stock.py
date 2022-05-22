@@ -10,19 +10,30 @@ load_dotenv()
 class stock:
 
     def __init__(self):
-        self.API_KEY = "sandbox_ca4pl4aad3ibhjmjp4hg"
+        # self.API_KEY = "sandbox_ca4pl4aad3ibhjmjp4hg"
+        self.API_KEY = os.getenv('FINNHUB_SANDBOX_API')
         self.finnhub_client = finnhub.Client(api_key=self.API_KEY)
 
-    def buy(self, amount, stock):
+    # returns the max amount of stock user is able to purchase 
+    def maxPurchase(self, stock, cash):
         # s = stock
-        price = self.finnhub_client.quote(stock.upper())
+        quote = self.finnhub_client.quote(stock.upper())
 
         # print(price)
+        curPrice = quote['c']
 
-        curPrice = price['c']
+        max_buy = cash / curPrice
+
+        return max_buy
+
+    def get_quote(self, stock, amount):
+        # s = stock
+        quote = self.finnhub_client.quote(stock.upper())
+
+        # print(price)
+        curPrice = quote['c']
 
         # print('cur - ', curPrice)
-
         amountNeed = self.__calc(amount, int(curPrice))
 
         return amountNeed
