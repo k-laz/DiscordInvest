@@ -1,7 +1,9 @@
 
 import os, psycopg2, time, logging
+import uuid
 from sqlite3 import connect
 from dotenv import load_dotenv
+from requests import delete
 
 load_dotenv()
 
@@ -13,10 +15,10 @@ class dataBase:
     def create_account(self, username, balance):
         with self.conn.cursor() as cur:
             cur.execute(
-                "CREATE TABLE IF NOT EXISTS accounts (id STRING PRIMARY KEY, balance INT)"
+                "CREATE TABLE IF NOT EXISTS accounts (id UUID PRIMARY KEY, balance INT, portfolio_value INT)"
             )
             cur.execute(
-                "UPSERT INTO accounts (id, balance) VALUES (%s, %s)", (username, balance))
+                "UPSERT INTO accounts (id, balance, portfolio_value) VALUES (%s, %s, 0)", (username, balance))
             logging.debug("create_accounts(): status message: %s", cur.statusmessage)
         self.conn.commit()
 
@@ -121,20 +123,25 @@ class dataBase:
         self.conn.commit()
 
 
+    def delete_table(self) -> None:
+        with self.conn.cursor() as cur:
+            sql = "DROP TABLE accounts"
+            cur.execute(sql)
+
+        self.conn.commit()
+
 
 def main():
     portfolio = dataBase()
+    # portfolio.delete_table()
 
+    uuid = "acde070d-8c4c-4f0d-9d8a-162843c10333"
 
-    portfolio.create_account("zdon", 100000)
+    portfolio.create_account(uuid, 100000)
     portfolio.print_balances()
 
-    portfolio.transaction("zdon", -55000)
-    portfolio.print_balances()
-    portfolio.transaction("zdon", 5000)
-    portfolio.print_balances()
-    portfolio.add_stock("zdon","appl", 5)
-    portfolio.print_stock("appl")
+    # portfolio.add_stock(uuid, "APPL", 5)
+    # portfolio.print_stock("APPL")
 
     portfolio.col_names()
     
