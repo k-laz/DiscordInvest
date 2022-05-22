@@ -3,6 +3,7 @@ import string
 
 from dotenv import load_dotenv
 import finnhub
+import re
 
 load_dotenv()
 
@@ -11,9 +12,6 @@ class Stock:
     def __init__(self):
         self.API_KEY = os.getenv('PROJECT_API_KEY')
         self.finnhub_client = finnhub.Client(api_key=self.API_KEY)
-
-    def setQuote(self, stock):
-        self.quote = self.finnhub_client.quote(stock.upper())
 
     # returns the max amount of stock user is able to purchase 
     def maxPurchase(self, ticker, cash):
@@ -40,7 +38,7 @@ class Stock:
         
         return shares * curPrice
 
-
+    # returns the amount of 
     def sell(self, amount, stock):
         price = self.finnhub_client.quote(stock.upper())
         curPrice = price['c']
@@ -49,8 +47,12 @@ class Stock:
         return amountGained
 
     
-    #TODO: add correct regex here to test for TSLA 
-    def validTicker(self, stock):
-        empty = {'c': 0, 'd': None, 'dp': None, 'h': 0, 'l': 0, 'o': 0, 'pc': 0, 't': 0}
-        return self.finnhub_client.quote(stock) is not empty
-    
+    #TODO: add correct matching for existing stock tickers, needs more research
+    def validTicker(self, ticker):
+        pattern = '[A-Z]{4,4}'
+        result = re.match(pattern, ticker)
+        return result
+        # if result:
+        #     print(self.finnhub_client.symbol_lookup(ticker))
+        #     return True
+        # return False
