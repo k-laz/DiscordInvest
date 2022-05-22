@@ -1,3 +1,4 @@
+from multiprocessing.sharedctypes import Value
 import os
 
 import discord
@@ -6,7 +7,8 @@ from discord.ext import commands
 import logging
 import asyncio
 
-from . import Stock
+from stock import Stock
+
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -37,6 +39,7 @@ class User:
 
 
 bot = commands.Bot(command_prefix='$')
+stockExchange = Stock()
 users = {}
 
 def loadUser(userid) -> User:
@@ -84,27 +87,40 @@ async def show_portfolio(ctx, user):
     for stock in user.stocks:
         await ctx.send(f'{stock} - {user.stocks[stock]}')
 
+
 async def init_buy(ctx, user):
     await ctx.send("Specify Ticker (ex: TSLA)")
 
     # flag indicating the user is inputting amount of stock to purchase
     ticker = None
+    max_purchase = 0
     while True:
         try:
             # This command waits for either a Ticker or number
             msg = await bot.wait_for('message', check=lambda m: m.author == ctx.author and m.channel == ctx.channel, timeout=30.0)
-
+    
             # msg is the amount of stock to purchase, else its a Ticker
-            if is_number(msg) and ticker is not None:
-                # quote is the amount of cash needed to purchase specified amount of stock
-                quote = Stock.get_quote(ticker, msg)
-                user.purchase_stock(ticker, msg, quote)
+            if is_number(msg.content) and ticker is not None:
+                amount = float(msg.content)
+                # quote is the cash needed to purchase specified amount of stock
+                quote = stockExchange.get_price(amount)
+                buy = user.purchaseStock(ticker, amount, quote)
+                if buy == 0:
+                    await ctx.send(f'Unable to puchase {amount} amount of {ticker} stock, max purchase is {max_purchase}, try again')
+                else:
+                    await ctx.send(f'You successfully purchased {amount} worth of {ticker} stock')
+                    break
                     
-            elif Stock.validTicker(msg):
-                ticker = msg
-                max_purchase = await Stock.maxPurchase(msg, user.cash)
-                await ctx.send(f'Your max buying power of {msg} is {max_purchase}, how much would you like to buy? (input number)')
+            #TODO: if user inputs an incorrect Ticker, the validTicker function still returns True for some reason, solve this later
+            elif not is_number(msg.content) and stockExchange.validTicker(msg.content):
+                ticker = msg.content
+                quote = stockExchange.setQuote(ticker)
+                max_purchase = stockExchange.maxPurchase(ticker, user.cash)
+                await ctx.send(f'Your max buying power of {ticker} is {max_purchase}, how much would you like to buy? (input number)')
                 continue
+            elif msg.content == "exit":
+                await ctx.send("Leaving the purchasing area...")
+                break
             else:
                 await ctx.send("Invalid input, try again...")
                 continue
@@ -114,7 +130,11 @@ async def init_buy(ctx, user):
             break
 
 def is_number(value):
-    return type(value) in [int, float]
+    try:
+        n = float(value)
+        return True
+    except ValueError:
+        return False
 
 bot.run(TOKEN)
 

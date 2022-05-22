@@ -7,33 +7,32 @@ import finnhub
 load_dotenv()
 
 
-class stock:
-
+class Stock:
     def __init__(self):
         self.API_KEY = os.getenv('PROJECT_API_KEY')
         self.finnhub_client = finnhub.Client(api_key=self.API_KEY)
+        self.quote = 0
+
+    def setQuote(self, stock):
+        self.quote = self.finnhub_client.quote(stock.upper())
 
     # returns the max amount of stock user is able to purchase 
     def maxPurchase(self, stock, cash):
-        # s = stock
-        quote = self.finnhub_client.quote(stock.upper())
-
         # print(price)
-        curPrice = quote['c']
-
-        max_buy = cash / curPrice
+        curPrice = self.quote['c']
+        max_buy = 0
+        if curPrice != 0:
+            max_buy = cash / curPrice
 
         return max_buy
 
-    def get_quote(self, stock, amount):
-        # s = stock
-        quote = self.finnhub_client.quote(stock.upper())
-
+    # returns the amount of cash needed to purchase a certain amount of stock
+    def get_price(self, amount):
         # print(price)
-        curPrice = quote['c']
+        curPrice = self.quote['c']
 
         # print('cur - ', curPrice)
-        amountNeed = self.__calc(amount, int(curPrice))
+        amountNeed = amount*curPrice
 
         return amountNeed
 
@@ -46,13 +45,8 @@ class stock:
 
         return amountGained
 
-
-    # private method
-    def __calc(self, amount, price):
-
-        print('amount - ', amount)
-        print('price - ', price)
-
-        self.amountNeeded = amount * price
-
-        return self.amountNeeded
+    
+    def validTicker(self, stock):
+        empty = {'c': 0, 'd': None, 'dp': None, 'h': 0, 'l': 0, 'o': 0, 'pc': 0, 't': 0}
+        return self.finnhub_client.quote(stock) is not empty
+    
