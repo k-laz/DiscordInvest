@@ -17,7 +17,7 @@ class dataBase:
     def create_account(self, username, balance):
         with self.conn.cursor() as cur:
             cur.execute(
-                "CREATE TABLE IF NOT EXISTS accounts (id UUID PRIMARY KEY, balance INT, portfolio_value INT)"
+                "CREATE TABLE IF NOT EXISTS accounts (id STRING PRIMARY KEY, balance INT, portfolio_value INT)"
             )
             cur.execute(
                 "UPSERT INTO accounts (id, balance, portfolio_value) VALUES (%s, %s, 0)", (username, balance))
