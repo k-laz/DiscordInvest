@@ -1,5 +1,7 @@
 #from curses import noecho
 import os, psycopg2, time, logging
+from pickle import FALSE
+from types import NoneType
 import uuid
 from sqlite3 import connect
 from dotenv import load_dotenv
@@ -61,7 +63,7 @@ class dataBase:
             )
 
             print('fetch-', cur.fetchone())
-            if(cur.fetchone != "None"):
+            if(cur.fetchone != " None"):
                 print("in here")
             # cur.execute(
             #     'UPSERT INTO shares (userID, name, amount) VALUES (%s, %s, %s)' , (uuid, stock, amount)
@@ -69,7 +71,30 @@ class dataBase:
             logging.debug("add_stock(): status message: %s", cur.statusmessage) 
         self.conn.commit()
 
-    
+
+    # returns the balance of the input user
+    def getBalance(self, uuid):
+        balance = 0
+        with self.conn.cursor() as cur:
+            cur.execute(
+               'SELECT balance FROM accounts WHERE id = %s', (uuid,)
+            )
+            balance = cur.fetchone()
+        
+        self.conn.commit()
+
+        return balance
+
+
+    # return true or false if the user is in the database
+    def hasUser(self, discordID):
+        with self.conn.cursor() as cur:
+            cur.execute(
+                'SELECT 1 FROM accounts WHERE id = %s', (discordID,)
+            )
+            if cur.fetchone() is None:
+                return False
+        return True
 
 
     # this method removes a stock from the table
@@ -134,8 +159,6 @@ class dataBase:
             cur.execute(sql)
             sql = "DROP TABLE accounts"
             cur.execute(sql)
-            sql = "DROP TABLE messages"
-            cur.execute(sql)
 
         self.conn.commit()
 
@@ -147,18 +170,27 @@ def main():
     # exit()
 
     uuid = "acde070d-8c4c-4f0d-9d8a-162843c10333"
+    uuid_notExists = "acde070d-8c7c-4f0d-9d8a-162843c10333"
 
     portfolio.create_account(uuid, 100000)
-    portfolio.print_balances()
+    a = portfolio.getBalance(uuid)
+    print(a)
+    # portfolio.print_balances()
     portfolio.transaction(uuid, -55000)
-    portfolio.print_balances()
+    # portfolio.print_balances()
+    a = portfolio.getBalance(uuid)
+    print(a)
 
-    portfolio.add_stock(uuid, 'appl', 5)
+    if portfolio.hasUser(uuid_notExists) == False:
+        print("user doesn't exist")
 
-    portfolio.col_names("accounts")
-    portfolio.col_names("shares")
 
-    portfolio.print_stock("APPL")
+    # portfolio.add_stock(uuid, 'appl', 5)
+
+    # portfolio.col_names("accounts")
+    # portfolio.col_names("shares")
+
+    # portfolio.print_stock("APPL")
     
     # portfolio.delete_accounts()
     # portfolio.col_names()
