@@ -8,6 +8,7 @@ import logging
 import asyncio
 
 from stock import Stock
+from db import DB
 
 
 load_dotenv()
@@ -40,12 +41,16 @@ class User:
 
 
 bot = commands.Bot(command_prefix='$')
+database = DB()
 stockExchange = Stock()
 users = {}
 
 def loadUser(userid) -> User:
     if userid not in users:
+        database.get_user(userid)
+        # if not database.get_user(userid):
         users[userid] = User(userid)
+        database.insert_user(userid)
     
     return users[userid]
 
@@ -61,6 +66,7 @@ async def on_ready():
 async def invest(ctx):
     await ctx.send(f'{ctx.author}, welcome to your personal mock investment platform')
     await ctx.send('Available commands: portfolio, buy, sell, help, exit')
+
     user = loadUser(ctx.author.id)
 
     while True:
