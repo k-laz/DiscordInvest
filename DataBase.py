@@ -1,4 +1,4 @@
-from curses import noecho
+
 import os, psycopg2, time, logging
 from sqlite3 import connect
 from dotenv import load_dotenv
