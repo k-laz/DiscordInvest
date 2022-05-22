@@ -72,6 +72,8 @@ def main():
 
     portfolio.transaction("zdon", -55000)
     portfolio.print_balances()
+    portfolio.transaction("zdon", 5000)
+    portfolio.print_balances()
 
 if __name__ == "__main__":
     main()
