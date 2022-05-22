@@ -4,7 +4,7 @@ from tkinter.tix import Select
 from pickle import FALSE
 from types import NoneType
 import uuid
-from sqlite3 import connect
+from sqlite3 import Row, connect
 from dotenv import load_dotenv
 from requests import delete
 
@@ -107,6 +107,20 @@ class dataBase:
         pass
 
 
+    def getShareID(self, discordID):
+        with self.conn.cursor() as cur:
+            cur.execute(
+                'SELECT Id from shares WHERE userID = %s', (discordID,)
+            )
+            # print(cur.fetchall())
+
+            row = cur.fetchone()
+
+            for row in row:
+                print(row)
+
+        self.conn.commit()
+
 
 
 
@@ -174,7 +188,7 @@ class dataBase:
 
     def stockAmount(self):
         with self.conn.cursor() as cur:
-            cur.execute("SELECT userID, name, amount FROM shares")
+            cur.execute("SELECT ID, userID, name, amount FROM shares")
 
             rows = cur.fetchall()
             self.conn.commit()
@@ -184,15 +198,6 @@ class dataBase:
 
         self.conn.commit()
 
-
-
-def getShareID(self):
-    with self.conn.cursor() as cur:
-            cur.execute(
-                "SELECT userID, name, amount FROM shares"
-            )
-
-        self.conn.commit()
 
 
 
@@ -218,12 +223,14 @@ def main():
     # if portfolio.hasUser(uuid_notExists) == False:
     #     print("user doesn't exist")
 
+    # portfolio.getShareID(uuid)
 
     portfolio.add_stock(uuid, 'appl', 5)
-
     portfolio.stockAmount()
     portfolio.add_stock(uuid, 'appl', 5)
     portfolio.stockAmount()
+
+
 
     # portfolio.col_names("accounts")
     # portfolio.col_names("shares")
