@@ -101,8 +101,20 @@ class dataBase:
 
 
     # this method removes a stock from the table
-    def remove_stock(self, stock, amount) -> None:
-        pass
+    def remove_stock(self, uuid, stock, amount) -> None:
+        
+        with self.conn.cursor() as cur:
+            cur.execute(
+                'SELECT 1 FROM shares WHERE userid = %s AND name = %s', (uuid, stock)
+            )
+
+            if(cur.fetchone() is not None):
+                # print("in here")
+                cur.execute(
+                    'UPDATE shares SET amount = amount - %s WHERE userID = %s AND name = %s', (amount, uuid, stock)
+                )
+
+        self.conn.commit()
 
 
     def getShareID(self, discordID):
@@ -118,6 +130,10 @@ class dataBase:
                 print(row)
 
         self.conn.commit()
+
+
+    def getStockAmount():
+        pass
 
 
 
@@ -223,10 +239,10 @@ def main():
 
     # portfolio.getShareID(uuid)
 
-    portfolio.add_stock(uuid, 'appl', 5)
+    portfolio.remove_stock(uuid, 'appl', 20)
     portfolio.stockAmount()
-    portfolio.add_stock(uuid, 'appl', 5)
-    portfolio.stockAmount()
+    # portfolio.add_stock(uuid, 'appl', 5)
+    # portfolio.stockAmount()
 
 
 
