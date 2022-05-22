@@ -1,5 +1,6 @@
 #from curses import noecho
 import os, psycopg2, time, logging
+from tkinter.tix import Select
 from pickle import FALSE
 from types import NoneType
 import uuid
@@ -62,12 +63,16 @@ class dataBase:
                 'SELECT 1 FROM shares WHERE userid = %s AND name = %s', (uuid, stock)
             )
 
-            print('fetch-', cur.fetchone())
-            if(cur.fetchone != " None"):
-                print("in here")
-            # cur.execute(
-            #     'UPSERT INTO shares (userID, name, amount) VALUES (%s, %s, %s)' , (uuid, stock, amount)
-            # )
+            # print('fetch-', cur.fetchone())
+            if(cur.fetchone() is not None):
+                # print("in here")
+                cur.execute(
+                    'UPDATE shares SET amount = amount + %s WHERE userID = %s AND name = %s', (amount, uuid, stock)
+                )
+            else:
+                cur.execute(
+                    'UPSERT INTO shares (userID, name, amount) VALUES (%s, %s, %s)' , (uuid, stock, amount)
+                )
             logging.debug("add_stock(): status message: %s", cur.statusmessage) 
         self.conn.commit()
 
@@ -100,6 +105,11 @@ class dataBase:
     # this method removes a stock from the table
     def remove_stock(self, stock, amount) -> None:
         pass
+
+
+
+
+
 
     # tester methods
     def print_balances(self) -> None:
@@ -162,6 +172,30 @@ class dataBase:
 
         self.conn.commit()
 
+    def stockAmount(self):
+        with self.conn.cursor() as cur:
+            cur.execute("SELECT userID, name, amount FROM shares")
+
+            rows = cur.fetchall()
+            self.conn.commit()
+            print(f"Balances at {time.asctime()}:")
+            for row in rows:
+                print(row)
+
+        self.conn.commit()
+
+
+
+def getShareID(self):
+    with self.conn.cursor() as cur:
+            cur.execute(
+                "SELECT userID, name, amount FROM shares"
+            )
+
+        self.conn.commit()
+
+
+
 
 def main():
     portfolio = dataBase()
@@ -181,11 +215,15 @@ def main():
     a = portfolio.getBalance(uuid)
     print(a)
 
-    if portfolio.hasUser(uuid_notExists) == False:
-        print("user doesn't exist")
+    # if portfolio.hasUser(uuid_notExists) == False:
+    #     print("user doesn't exist")
 
 
-    # portfolio.add_stock(uuid, 'appl', 5)
+    portfolio.add_stock(uuid, 'appl', 5)
+
+    portfolio.stockAmount()
+    portfolio.add_stock(uuid, 'appl', 5)
+    portfolio.stockAmount()
 
     # portfolio.col_names("accounts")
     # portfolio.col_names("shares")
