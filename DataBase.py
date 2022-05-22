@@ -1,4 +1,4 @@
-
+#from curses import noecho
 import os, psycopg2, time, logging
 import uuid
 from sqlite3 import connect
