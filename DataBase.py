@@ -49,7 +49,7 @@ class dataBase:
     # this method adds a new stock to the table
     def add_stock(self, userID, stock, amount,) -> None:
         userID = str(userID)
-        
+
         with self.conn.cursor() as cur:
             # todo - maybe use gen_random_uuid()
             # sql = "CREATE TABLE IF NOT EXISTS shares (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), userID UUID REFERENCES accounts, name STRING, amount FLOAT)"
@@ -96,6 +96,7 @@ class dataBase:
 
     # return true or false if the user is in the database
     def hasUser(self, discordID):
+        discordID = str(discordID)
         with self.conn.cursor() as cur:
             cur.execute(
                 'SELECT 1 FROM accounts WHERE id = %s', (discordID)
@@ -106,23 +107,24 @@ class dataBase:
 
 
     # this method removes a stock from the table
-    def remove_stock(self, uuid, stock, amount) -> None:
-        
+    def remove_stock(self, userID, stock, amount) -> None:
+        userID = str(userID)
         with self.conn.cursor() as cur:
             cur.execute(
-                'SELECT 1 FROM shares WHERE userid = %s AND name = %s', (uuid, stock)
+                'SELECT 1 FROM shares WHERE userid = %s AND name = %s', (userID, stock)
             )
 
             if(cur.fetchone() is not None):
                 # print("in here")
                 cur.execute(
-                    'UPDATE shares SET amount = amount - %s WHERE userID = %s AND name = %s', (amount, uuid, stock)
+                    'UPDATE shares SET amount = amount - %s WHERE userID = %s AND name = %s', (amount, userID, stock)
                 )
 
         self.conn.commit()
 
 
     def getShareID(self, discordID):
+        discordID = str(discordID)
         with self.conn.cursor() as cur:
             cur.execute(
                 'SELECT Id from shares WHERE userID = %s', (discordID,)
@@ -142,6 +144,7 @@ class dataBase:
 
 
     def getProfolio(self, userID):
+        userID = str(userID)
         with self.conn.cursor() as cur:
             cur.execute(
                 'SELECT name, amount from shares WHERE userID = %s', (userID,)
@@ -240,7 +243,7 @@ def main():
 
     # exit()
 
-    uuid = "acde070d-8c4c-4f0d-9d8a-162843c10333"
+    uuid = "zdon#2524"
     uuid_notExists = "acde070d-8c7c-4f0d-9d8a-162843c10333"
 
     portfolio.create_account(uuid, 100000)
@@ -257,12 +260,12 @@ def main():
 
     # portfolio.getShareID(uuid)
 
-    # portfolio.add_stock(uuid, 'appl', 100)
-    # portfolio.stockAmount()
+    portfolio.add_stock(uuid, 'appl', 100)
+    portfolio.stockAmount()
 
 
-    # portfolio.add_stock(uuid, 'tsla', 15)
-    # portfolio.stockAmount()
+    portfolio.add_stock(uuid, 'tsla', 15)
+    portfolio.stockAmount()
     
     port = portfolio.getProfolio(uuid)
 
