@@ -3,3 +3,7 @@ venv
 test.py
 bot2.py
 bot3.py
+__init__.py
+example.py
+__pycache__/dataBase.cpython-310.pyc
+__pycache__/stock.cpython-310.pyc
