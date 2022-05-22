@@ -16,7 +16,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 
 
 #logging.basicConfig(level=logging.INFO)
-
+#TODO: seperate the User class into its own file 
 class User:
     def __init__(self, id):
         self.id = id
@@ -120,6 +120,7 @@ async def init_buy(ctx, user):
             elif is_number(msg.content) and ticker is not None:
                 shares = float(msg.content)
                 # quote is the cash needed to purchase specified amount of stock
+                #TODO: there is a better way to seperate logic here, a user should not be responsible for handling share calculations
                 quote = stockExchange.get_price(ticker, shares)
                 buy = user.purchaseStock(ticker, shares, quote)
                 if buy == 0:
@@ -128,7 +129,6 @@ async def init_buy(ctx, user):
                     await ctx.send(f'You successfully purchased {shares} shares of {ticker} stock')
                     await ctx.send("Option to buy more: Specify Ticker (ex: TSLA)")
                 
-            #TODO: if user inputs an incorrect Ticker, the validTicker function still returns True for some reason, solve this later
             elif stockExchange.validTicker(msg.content):
                 ticker = msg.content
                 quote = stockExchange.setQuote(ticker)
@@ -189,9 +189,6 @@ async def init_sell(ctx, user):
             break
     await ctx.send("Leaving exhange platform...")
     
-
-# async def purchase(ctx, user, ticker, shares: float):
-#     pass
 
 def is_number(value):
     try:
