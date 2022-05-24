@@ -1,17 +1,11 @@
-# Discord Invest -- GryphHacks 2022 Submission<br/>
+# Discord Invest <br/>
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/56948805/169717054-e55d7292-a81d-409a-a5a8-0558beac739e.png" alt="logo" width="120" height="120">
   <a>
     <img src="link here" alt="Logo" width="80" height="80">
   </a>
-  <h3 align="center">GRYPH HACKS 2022</h3>
-
-  <p align="center">
-    <br/>
-    <a href="https://discord.gg/sXJdbFxc">Join the server!</a>
-    <br/>
-  </p>
+  <h3 align="center">GryphHacks 2022 submission</h3>
 </p>
 
 ## Inspiration
@@ -49,7 +43,7 @@ We learnt that collaborating on a technical projects with teammates in multiple 
 
 ## Getting Started
 
-To get started <a href="   server address  ">Click Me</a> to add the bot to your server.
+To get started <a href="https://discord.gg/sXJdbFxc">Join the server!</a>
 
 ## Usage
 
