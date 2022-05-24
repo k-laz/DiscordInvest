@@ -1,10 +1,7 @@
 # Discord Invest <br/>
 
 <p align="center">
-  <a>
-    <img src="https://user-images.githubusercontent.com/56948805/169717054-e55d7292-a81d-409a-a5a8-0558beac739e.png" alt="logo" width="180" height="180">
-  </a>
-  <h5 align="center">GryphHacks 2022 submission</h5>
+  <img src="https://user-images.githubusercontent.com/56948805/169717054-e55d7292-a81d-409a-a5a8-0558beac739e.png" alt="logo" width="180" height="180">
 </p>
 
 ## Usage
