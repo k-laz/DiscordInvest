@@ -1,33 +1,23 @@
 # Discord Invest <br/>
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/56948805/169717054-e55d7292-a81d-409a-a5a8-0558beac739e.png" alt="logo" width="120" height="120">
   <a>
-    <img src="link here" alt="Logo" width="80" height="80">
+    <img src="https://user-images.githubusercontent.com/56948805/169717054-e55d7292-a81d-409a-a5a8-0558beac739e.png" alt="logo" width="120" height="120">
   </a>
   <h3 align="center">GryphHacks 2022 submission</h3>
 </p>
 
+## Usage
+
+- **:buy** - Buy shares for your portfolio<br/>
+- **:sell** - Sell shares from your portfolio <br/>
+- **:info** - To get some more information about a particular stock <br/>
+- **:portfolio** - To view your portfolio <br/>
+- **:leaderboard** - To view the leaderboard of the server <br/>
+
 ## Inspiration
 
 The recent market crash made us very conscious of our investments. This inspired the creation of Discord Invest, a mock trading platform in a convenient form of a Discord bot. By gamifying the exchange, users can learn more about trading strategies, compete with friends, and ultimately have fun!
-
-## Functionality
-
-**Purchasing Shares**
-The command for buying is ':buy'. The user can then proceed by specifiying the stock ticker and how many shares to purchase.
-
-**Selling Shares**
-When the user wants to sell their shares, they can run the command ':sell' to specifiy the ticker and how much they want to sell.
-
-**Viewing Stock Information**
-User can run the command ':info' and enter the ticker of a a stock they are looking for, to get more information on that type of the stock, the asset price, what market is it on and any associated fees of the transaction.
-
-**Viewing Portfolio**
-By running the command ':porfolio', the user can look at their porfolio where information about their stocks and current total evaluation resides.
-
-**Viewing The Leaderboard**
-To further gamify the system, we added a leaderboard functionality which tracks every user invested on the server and their returns. The command ranks top 5 investors and displays them in a neat format for evrybody to see.
 
 ## How we built it
 
@@ -44,14 +34,6 @@ We learnt that collaborating on a technical projects with teammates in multiple 
 ## Getting Started
 
 To get started <a href="https://discord.gg/sXJdbFxc">Join the server!</a>
-
-## Usage
-
-- **:buy** - Buy shares for your portfolio<br/>
-- **:sell** - Sell shares from your portfolio <br/>
-- **:info** - To get some more information about a particular stock <br/>
-- **:portfolio** - To view your portfolio <br/>
-- **:leaderboard** - To view the leaderboard of the server <br/>
 
 ## License
 
