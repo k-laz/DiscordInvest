@@ -1,6 +1,6 @@
 # Discord Invest <img src="https://user-images.githubusercontent.com/56948805/169717054-e55d7292-a81d-409a-a5a8-0558beac739e.png" align="right" alt="logo" width="180" height="180">
 <br/>
-
+GryphHacks 2022 submission
 ## Usage
 
 - **$invest** - Initializes the trading platform, all commands follow it<br/>
