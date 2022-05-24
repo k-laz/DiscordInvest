@@ -9,7 +9,7 @@
 
 ## Usage
 
-- **$investy** - Initializes the trading platform, all commands follow it<br/>
+- **$invest** - Initializes the trading platform, all commands follow it<br/>
 - **sell** - Sell shares<br/>
 - **buy** - Buy shares<br/>
 - **portfolio** - To view your portfolio <br/>
