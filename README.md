@@ -1,8 +1,5 @@
-# Discord Invest <br/>
-
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/56948805/169717054-e55d7292-a81d-409a-a5a8-0558beac739e.png" alt="logo" width="180" height="180">
-</p>
+# Discord Invest <img src="https://user-images.githubusercontent.com/56948805/169717054-e55d7292-a81d-409a-a5a8-0558beac739e.png" align="right" alt="logo" width="180" height="180">
+<br/>
 
 ## Usage
 
