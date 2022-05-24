@@ -2,15 +2,15 @@
 
 <p align="center">
   <a>
-    <img src="https://user-images.githubusercontent.com/56948805/169717054-e55d7292-a81d-409a-a5a8-0558beac739e.png" alt="logo" width="120" height="120">
+    <img src="https://user-images.githubusercontent.com/56948805/169717054-e55d7292-a81d-409a-a5a8-0558beac739e.png" alt="logo" width="180" height="180">
   </a>
-  <h3 align="center">GryphHacks 2022 submission</h3>
+  <h5 align="center">GryphHacks 2022 submission</h5>
 </p>
 
 ## Usage
 
-- **:buy** - Buy shares for your portfolio<br/>
-- **:sell** - Sell shares from your portfolio <br/>
+- **:buy** - Buy shares<br/>
+- **:sell** - Sell shares<br/>
 - **:info** - To get some more information about a particular stock <br/>
 - **:portfolio** - To view your portfolio <br/>
 - **:leaderboard** - To view the leaderboard of the server <br/>
