@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from dotenv import load_dotenv
 import finnhub
@@ -8,9 +9,22 @@ load_dotenv()
 
 
 class Stock:
-    def __init__(self):
+    def __init__(self, ticker):
         self.API_KEY = os.getenv('PROJECT_API_KEY')
         self.finnhub_client = finnhub.Client(api_key=self.API_KEY)
+        self.ticker = ticker
+        self.quote = self.quote()
+
+    # pattern = '[A-Z]{4,4}'
+    # if re.match(pattern, self.ticker):
+    # Checks the validity of the ticker and produces a quote for it
+    def quote(self) -> Optional[float]:
+        symbol_lookup = self.finnhub_client.symbol_lookup(self.ticker)
+        if (symbol_lookup.result is not []):
+            return self.finnhub_client.quote(symbol_lookup.result[0].symbol['c'])
+        else:
+            return None
+
 
     # returns the max amount of stock user is able to purchase 
     def maxPurchase(self, ticker, cash):
@@ -44,14 +58,3 @@ class Stock:
         amountGained = self.__calc(amount, int(curPrice))
 
         return amountGained
-
-    
-    #TODO: add correct matching for existing stock tickers, needs more research
-    def validTicker(self, ticker):
-        pattern = '[A-Z]{4,4}'
-        result = re.match(pattern, ticker)
-        return result
-        # if result:
-        #     print(self.finnhub_client.symbol_lookup(ticker))
-        #     return True
-        # return False

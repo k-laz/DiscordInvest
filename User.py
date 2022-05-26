@@ -1,7 +1,7 @@
 class User:
-    def __init__(self, id):
+    def __init__(self, id, funds=100000):
         self.id = id
-        self.cash = 100000
+        self.funds = funds
         self.stocks = {}
 
     # returns the price of purchased stock on success and 0 on failure

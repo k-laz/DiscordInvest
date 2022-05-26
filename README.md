@@ -1,19 +1,20 @@
-# Discord Invest <br/>
+# Discord Invest
+
+<h5>GryphHacks 2022 submission</h5><br/>
 
 <p align="center">
   <a>
     <img src="https://user-images.githubusercontent.com/56948805/169717054-e55d7292-a81d-409a-a5a8-0558beac739e.png" alt="logo" width="180" height="180">
   </a>
-  <h5 align="center">GryphHacks 2022 submission</h5>
 </p>
 
 ## Usage
 
-- **:buy** - Buy shares<br/>
-- **:sell** - Sell shares<br/>
-- **:info** - To get some more information about a particular stock <br/>
-- **:portfolio** - To view your portfolio <br/>
-- **:leaderboard** - To view the leaderboard of the server <br/>
+- **-buy** - Buy shares<br/>
+- **-sell** - Sell shares<br/>
+- **-info** - To get some more information about a particular stock <br/>
+- **-portfolio** - To view your portfolio <br/>
+- **-leaderboard** - To view the leaderboard of the server <br/>
 
 ## Inspiration
 
@@ -33,7 +34,7 @@ We learnt that collaborating on a technical projects with teammates in multiple 
 
 ## Getting Started
 
-To get started <a href="https://discord.gg/sXJdbFxc">Join the server!</a>
+To try it out <a href="https://discord.gg/sXJdbFxc">Join the server!</a>
 
 ## License
 
