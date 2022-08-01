@@ -5,20 +5,22 @@ from turtle import color
 import discord
 from dotenv import load_dotenv
 from discord.ext import commands
-import logging
 import asyncio
 
 from Stock import Stock
 from User import User
 from Embed import Embed
 
+import config
+
+import logging
+logging.basicConfig(level=logging.INFO)
+
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
 
-bot = commands.Bot(command_prefix='-')
-#db = dataBase()
-users = {}
+bot = commands.Bot(command_prefix=':')
 
 
 @bot.event
