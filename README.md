@@ -29,8 +29,10 @@ Discord Invest was built collaboratively using python with discord.py library as
 We learnt that collaborating on a technical projects with teammates in multiple timezones is a challenge of a bigger magnitude than one initially expects. Both GIT and Discord were invaluable in the efficient cooperation that culminated in this project. On the technical side, we learnt how to use financial API's, store data in the cloud using a relational database, and use a very convenient python library to build the bot.
 
 ## Built With
-
-**Python, SQL, Finnhub Stock API, CockroachDB, Discord**
+* [Python](https://www.python.org/)
+* [CockroachDB](https://www.cockroachlabs.com/)
+* [Finnhub Stock API](https://finnhub.io/)
+* [discord.py](https://discordpy.readthedocs.io/en/stable/)
 
 ## Getting Started
 
